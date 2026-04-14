@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discussion Paper — Simple BW Template</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #E5E5E5;
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #000;
+}
+
+.presentation { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.slide {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1440px; height: 810px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.10);
+  padding: 56px 80px 72px;
+  display: none;
+}
+.slide.active { display: block; }
+
+/* ===== Cover ===== */
+.slide.cover { display: none; }
+.slide.cover.active { display: flex; flex-direction: column; justify-content: center; padding: 80px 120px; }
+.cover-subject { font-size: 14px; letter-spacing: 0.25em; color: #666; margin-bottom: 32px; }
+.cover-title { font-size: 60px; font-weight: 700; line-height: 1.3; margin-bottom: 20px; letter-spacing: -0.01em; }
+.cover-subtitle { font-size: 22px; font-weight: 400; color: #333; line-height: 1.6; }
+.cover-meta { position: absolute; bottom: 80px; left: 120px; font-size: 13px; color: #666; letter-spacing: 0.08em; }
+.cover-line { position: absolute; top: 80px; left: 120px; width: 80px; height: 3px; background: #000; }
+
+/* ===== Divider ===== */
+.slide.divider { display: none; }
+.slide.divider.active { display: flex; align-items: center; padding: 0 160px; background: #000; color: #fff; }
+.divider-number { font-size: 160px; font-weight: 700; line-height: 1; margin-right: 72px; color: #fff; letter-spacing: -0.03em; }
+.divider-body { border-left: 2px solid #fff; padding-left: 60px; }
+.divider-label { font-size: 13px; letter-spacing: 0.25em; color: #999; margin-bottom: 16px; }
+.divider-title { font-size: 52px; font-weight: 700; line-height: 1.3; }
+.divider-sub { font-size: 16px; font-weight: 400; color: #CCC; line-height: 1.6; margin-top: 20px; max-width: 680px; }
+
+/* ===== Content: 4-layer header ===== */
+.section-label { font-size: 11px; letter-spacing: 0.2em; color: #666; background: #F5F5F5; display: inline-block; padding: 6px 14px; margin-bottom: 24px; text-transform: uppercase; }
+.slide-title { font-size: 30px; font-weight: 700; line-height: 1.35; margin-bottom: 10px; }
+.slide-subtitle { font-size: 15px; font-weight: 400; color: #444; margin-bottom: 28px; line-height: 1.5; }
+.message-line { position: relative; padding: 14px 20px; margin-bottom: 36px; font-size: 15px; font-weight: 600; line-height: 1.55; background: #F9F9F9; }
+.message-line::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #000; }
+
+/* ===== Body layouts ===== */
+
+/* bullets */
+.body-bullets { font-size: 15px; line-height: 1.75; }
+.body-bullets li { list-style: none; padding-left: 20px; margin-bottom: 12px; position: relative; }
+.body-bullets li::before { content: '—'; position: absolute; left: 0; color: #000; font-weight: 700; }
+.body-bullets li strong { font-weight: 700; }
+
+/* 2 column */
+.body-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.col-title { font-size: 13px; letter-spacing: 0.15em; color: #666; margin-bottom: 10px; }
+.col-heading { font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #000; }
+
+/* table */
+.body-table { width: 100%; border-collapse: collapse; }
+.body-table th { background: #000; color: #fff; font-weight: 600; padding: 12px 14px; text-align: left; font-size: 13px; letter-spacing: 0.05em; }
+.body-table td { border-bottom: 1px solid #DDD; padding: 12px 14px; font-size: 13px; line-height: 1.5; vertical-align: top; }
+.body-table td:first-child { font-weight: 600; background: #FAFAFA; width: 180px; }
+.body-table td strong { font-weight: 700; }
+
+/* 2x2 matrix */
+.body-matrix { display: grid; grid-template-columns: 50px 1fr 1fr; grid-template-rows: 42px 1fr 1fr; height: 460px; gap: 0; }
+.matrix-header { display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; color: #000; background: #F5F5F5; border: 1px solid #CCC; letter-spacing: 0.05em; }
+.matrix-axis { writing-mode: vertical-rl; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666; letter-spacing: 0.15em; }
+.matrix-cell { border: 1px solid #CCC; padding: 18px; font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; justify-content: center; }
+.matrix-cell.highlight { background: #000; color: #fff; }
+.matrix-cell strong { display: block; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+
+/* flow */
+.body-flow { display: flex; align-items: stretch; gap: 16px; height: 340px; }
+.flow-step { flex: 1; border: 1.5px solid #000; padding: 24px 20px; display: flex; flex-direction: column; }
+.flow-phase { font-size: 11px; letter-spacing: 0.2em; color: #666; margin-bottom: 10px; }
+.flow-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+.flow-desc { font-size: 12px; color: #444; line-height: 1.5; }
+.flow-arrow { display: flex; align-items: center; font-size: 22px; color: #000; font-weight: 300; }
+
+/* key number */
+.body-key { display: flex; align-items: center; justify-content: center; flex-direction: column; height: 380px; text-align: center; }
+.key-number { font-size: 140px; font-weight: 700; line-height: 1; margin-bottom: 20px; letter-spacing: -0.04em; }
+.key-unit { font-size: 32px; font-weight: 600; margin-left: 8px; color: #333; }
+.key-caption { font-size: 17px; color: #444; line-height: 1.6; max-width: 700px; }
+
+/* timeline */
+.body-timeline { display: flex; position: relative; padding-top: 20px; }
+.body-timeline::before { content: ''; position: absolute; top: 54px; left: 40px; right: 40px; height: 1px; background: #000; }
+.tl-point { flex: 1; text-align: center; position: relative; }
+.tl-point::before { content: ''; display: block; width: 14px; height: 14px; background: #fff; border: 2px solid #000; border-radius: 50%; margin: 28px auto 18px; position: relative; z-index: 1; }
+.tl-point.current::before { background: #000; }
+.tl-date { font-size: 11px; letter-spacing: 0.1em; color: #666; margin-bottom: 6px; }
+.tl-label { font-size: 14px; font-weight: 600; line-height: 1.4; }
+.tl-note { font-size: 11px; color: #666; margin-top: 4px; line-height: 1.4; }
+
+/* ===== Closing ===== */
+.slide.closing { display: none; }
+.slide.closing.active { display: flex; align-items: center; justify-content: center; text-align: center; padding: 80px; }
+.closing-message { font-size: 40px; font-weight: 700; line-height: 1.5; max-width: 1100px; letter-spacing: -0.01em; }
+.closing-sub { font-size: 18px; font-weight: 400; color: #444; margin-top: 32px; line-height: 1.7; }
+
+/* ===== Footer ===== */
+.footer { position: absolute; bottom: 28px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #999; letter-spacing: 0.08em; border-top: 1px solid #E5E5E5; padding-top: 14px; }
+
+/* ===== Navbar ===== */
+.navbar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: #fff; padding: 8px 16px; font-size: 11px; letter-spacing: 0.08em; display: flex; gap: 16px; align-items: center; z-index: 100; }
+.navbar button { background: none; border: none; color: #fff; cursor: pointer; font-size: 13px; padding: 2px 6px; }
+.navbar button:hover { background: rgba(255,255,255,0.15); }
+.navbar span { min-width: 80px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="presentation">
+
+  <!-- 01 Cover -->
+  <section class="slide cover active">
+    <div class="cover-line"></div>
+    <div class="cover-subject">DISCUSSION PAPER</div>
+    <h1 class="cover-title">新規事業参入戦略の検討</h1>
+    <p class="cover-subtitle">市場機会の評価と参入シナリオの提示</p>
+    <div class="cover-meta">株式会社XXX 御中 ｜ 2026.04.14</div>
+  </section>
+
+  <!-- 02 Divider -->
+  <section class="slide divider">
+    <div class="divider-number">01</div>
+    <div class="divider-body">
+      <div class="divider-label">SECTION 1</div>
+      <h2 class="divider-title">論点の構造と本日の焦点</h2>
+      <p class="divider-sub">本日議論すべきポイントを整理し、意思決定の前提となる論点構造を合意する</p>
+    </div>
+  </section>
+
+  <!-- 03 Content: bullets -->
+  <section class="slide">
+    <div class="section-label">1. 論点の構造</div>
+    <h2 class="slide-title">本件は「入るか入らないか」ではなく「どのモデルで入るか」が論点である</h2>
+    <p class="slide-subtitle">参入自体の意思決定は既に完了。議論の焦点は参入モデルの選択にある</p>
+    <div class="message-line">3つの参入モデル（自社単独・JV・買収）のトレードオフを構造化し、本日意思決定の判断軸を合意したい</div>
+    <ul class="body-bullets">
+      <li>前回MTGで<strong>「参入自体は既定路線」</strong>と合意済み（2026-03-20 キックオフ議事録参照）</li>
+      <li>残された論点は「どの入り方を選ぶか」と「そのために誰と組むか」の2点</li>
+      <li>本日は参入モデル3案のトレードオフを整理し、来週の経営会議に向けた判断軸を合意する</li>
+      <li>各モデルの深掘りは Section 2 以降で実施</li>
+    </ul>
+    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.3</span></div>
+  </section>
+
+  <!-- 04 Content: 2col -->
+  <section class="slide">
+    <div class="section-label">2. 現状と目標</div>
+    <h2 class="slide-title">現状は「販売力に依存」、目標は「商品力で選ばれる」状態</h2>
+    <p class="slide-subtitle">3年スパンでのポジション転換を志向する</p>
+    <div class="message-line">現状と目標の差分が、今回の戦略的アジェンダ全体を規定する</div>
+    <div class="body-2col">
+      <div>
+        <div class="col-title">AS-IS</div>
+        <h3 class="col-heading">現状: 販売力依存</h3>
+        <ul class="body-bullets">
+          <li>売上の70%が既存クライアント依存</li>
+          <li>新規リードは紹介経由が中心</li>
+          <li>価格競争に巻き込まれやすい</li>
+          <li>商品軸でのブランド認知が限定的</li>
+        </ul>
+      </div>
+      <div>
+        <div class="col-title">TO-BE</div>
+        <h3 class="col-heading">目標: 商品力で選ばれる</h3>
+        <ul class="body-bullets">
+          <li>新規案件の50%を自社ブランド経由で獲得</li>
+          <li>業界内で「第一想起」ポジション</li>
+          <li>プレミアム価格帯の売上構成比 40%</li>
+          <li>自社メディアからのリード獲得機能</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.4</span></div>
+  </section>
+
+  <!-- 05 Content: table -->
+  <section class="slide">
+    <div class="section-label">3. 選択肢の評価</div>
+    <h2 class="slide-title">3案の比較: 自社単独 / JV / 買収</h2>
+    <p class="slide-subtitle">5つの判断軸で横比較</p>
+    <div class="message-line">スピード最優先なら買収、リスク最小なら自社単独、バランスならJV</div>
+    <table class="body-table">
+      <thead>
+        <tr><th>判断軸</th><th>自社単独</th><th>JV</th><th>買収</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>立ち上げスピード</td><td>△ 24ヶ月</td><td>○ 12ヶ月</td><td><strong>◎ 6ヶ月</strong></td></tr>
+        <tr><td>初期投資</td><td><strong>◎ 1億円</strong></td><td>○ 3億円</td><td>△ 15億円</td></tr>
+        <tr><td>技術・ノウハウ獲得</td><td>△ ゼロから</td><td>○ パートナー経由</td><td><strong>◎ 即時獲得</strong></td></tr>
+        <tr><td>ブランド独立性</td><td><strong>◎ 完全独立</strong></td><td>△ 共同ブランド</td><td>○ 統合設計余地</td></tr>
+        <tr><td>失敗時リスク</td><td><strong>◎ 小</strong></td><td>○ 中</td><td>△ 大</td></tr>
+      </tbody>
+    </table>
+    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.5</span></div>
+  </section>
+
+  <!-- 06 Content: matrix -->
+  <section class="slide">
+    <div class="section-label">3. 選択肢の評価</div>
+    <h2 class="slide-title">2軸マッピングで「買収」が最適象限に位置する</h2>
+    <p class="slide-subtitle">スピード × シナジー期待値のマトリクス</p>
+    <div class="message-line">スピード要求が高く、シナジー期待値も中〜高水準という今回の条件下では、買収が最適解</div>
+    <div class="body-matrix">
+      <div></div>
+      <div class="matrix-header">シナジー期待値: 低</div>
+      <div class="matrix-header">シナジー期待値: 高</div>
+      <div class="matrix-axis">速い</div>
+      <div class="matrix-cell"><strong>即席JV</strong>浅い提携。本丸シナジーに届きづらい</div>
+      <div class="matrix-cell highlight"><strong>買収 ★</strong>スピード × シナジー両立。本命シナリオ</div>
+      <div class="matrix-axis">遅い</div>
+      <div class="matrix-cell"><strong>撤退候補</strong>時間もシナジーもない象限</div>
+      <div class="matrix-cell"><strong>自社単独開発</strong>シナジーは高いが、立ち上げが遅い</div>
+    </div>
+    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.6</span></div>
+  </section>
+
+  <!-- 07 Content: flow -->
+  <section class="slide">
+    <div class="section-label">4. 実行プラン</div>
+    <h2 class="slide-title">買収実行は4段階で12ヶ月を目処とする</h2>
+    <p class="slide-subtitle">ターゲット選定からPMI完了まで</p>
+    <div class="message-line">各段階にステージゲートを設け、意思決定のフェーズを明確化する</div>
+    <div class="body-flow">
+      <div class="flow-step"><div class="flow-phase">PHASE 1</div><div class="flow-title">ロングリスト化</div><div class="flow-desc">業界内候補30社をスクリーニング。戦略適合性と入手可能性で初期評価（1-2ヶ月）</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-phase">PHASE 2</div><div class="flow-title">ショートリスト化</div><div class="flow-desc">3-5社に絞り込み、初期接触（NDA締結・IM受領）を実施（2-3ヶ月）</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-phase">PHASE 3</div><div class="flow-title">DD・交渉</div><div class="flow-desc">本命1社に対してDD実施、SPA交渉、クロージング（4-5ヶ月）</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-phase">PHASE 4</div><div class="flow-title">PMI実行</div><div class="flow-desc">100日計画の策定・実行、シナジー実現（12ヶ月〜）</div></div>
+    </div>
+    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.7</span></div>
+  </section>
+
+  <!-- 08 Content: key number -->
+  <section class="slide">
+    <div class="section-label">5. インパクト試算</div>
+    <h2 class="slide-title">3年後売上インパクトは約48億円</h2>
+    <p class="slide-subtitle">買収先既存売上 + クロスセル効果</p>
+    <div class="message-line">対象会社単独の売上25億円に、シナジー23億円を積み上げた総合効果として試算</div>
+    <div class="body-key">
+      <div class="key-number">48<span class="key-unit">億円</span></div>
+      <div class="key-caption">3年後連結売上インパクト（想定シナリオ・中位ケース）<br>内訳: 対象会社既存売上 25億円 + クロスセルシナジー 23億円</div>
+    </div>
+    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.8</span></div>
+  </section>
+
+  <!-- 09 Content: timeline -->
+  <section class="slide">
+    <div class="section-label">6. スケジュール</div>
+    <h2 class="slide-title">今期Q3に最終意思決定、来期上期クロージングを想定</h2>
+    <p class="slide-subtitle">マイルストーンと必要な社内プロセスを明示</p>
+    <div class="message-line">本日のディスカッションを踏まえ、5月の経営会議での最終判断を目指す</div>
+    <div class="body-timeline">
+      <div class="tl-point current"><div class="tl-date">2026-04</div><div class="tl-label">本DP討議</div><div class="tl-note">論点構造の合意</div></div>
+      <div class="tl-point"><div class="tl-date">2026-05</div><div class="tl-label">経営会議</div><div class="tl-note">参入モデル最終決定</div></div>
+      <div class="tl-point"><div class="tl-date">2026-07</div><div class="tl-label">ターゲット選定</div><div class="tl-note">ショートリスト確定</div></div>
+      <div class="tl-point"><div class="tl-date">2026-10</div><div class="tl-label">DD開始</div><div class="tl-note">本命1社に対して実施</div></div>
+      <div class="tl-point"><div class="tl-date">2027-04</div><div class="tl-label">クロージング</div><div class="tl-note">PMI開始</div></div>
+    </div>
+    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.9</span></div>
+  </section>
+
+  <!-- 10 Closing -->
+  <section class="slide closing">
+    <div>
+      <div class="closing-message">本日の焦点は「買収を推進するか」の経営判断。<br>事務局としては買収モデルでの推進を推奨する。</div>
+      <div class="closing-sub">判断を保留する場合、次回経営会議（5月）までに代替案の論点深掘りが必要</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="navbar">
+  <button id="prev">←</button>
+  <span id="counter">1 / 10</span>
+  <button id="next">→</button>
+</div>
+
+<script>
+(function(){
+  const BASE_W = 1440, BASE_H = 810;
+  const pres = document.querySelector('.presentation');
+  pres.style.width = BASE_W + 'px';
+  pres.style.height = BASE_H + 'px';
+  pres.style.position = 'absolute';
+  pres.style.top = '50%';
+  pres.style.left = '50%';
+  const fit = () => {
+    const s = Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H);
+    pres.style.transform = `translate(-50%, -50%) scale(${s})`;
+  };
+  addEventListener('load', fit);
+  addEventListener('resize', fit);
+  fit();
+})();
+
+const slides = document.querySelectorAll('.slide');
+const counter = document.getElementById('counter');
+let current = 0;
+function goTo(i) {
+  current = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+  counter.textContent = `${current + 1} / ${slides.length}`;
+}
+document.getElementById('prev').addEventListener('click', (e) => { e.stopPropagation(); goTo(current - 1); });
+document.getElementById('next').addEventListener('click', (e) => { e.stopPropagation(); goTo(current + 1); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { goTo(current + 1); e.preventDefault(); }
+  if (e.key === 'ArrowLeft') goTo(current - 1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(slides.length - 1);
+});
+document.querySelector('.presentation').addEventListener('click', e => {
+  if (e.target.closest('.navbar')) return;
+  const half = window.innerWidth / 2;
+  goTo(e.clientX > half ? current + 1 : current - 1);
+});
+</script>
+</body>
+</html>
