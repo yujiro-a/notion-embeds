@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Template: dp-simple-bw v1.0 | 2026-04-14 | Frozen design -->
-<title>Discussion Paper — Simple BW Template</title>
+<!-- Template: dp-simple-bw-skeleton v1.0 | 2026-04-14 | Fill in slides via INSERT_SLIDES_HERE -->
+<title>Discussion Paper — Skeleton</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body {
@@ -126,166 +126,56 @@ html, body {
 </head>
 <body>
 <div class="presentation">
+  <!-- ==== INSERT_SLIDES_HERE ==== -->
+  <!-- 
+  Slide types reference (詳細は dp-simple-bw.html 参照):
 
-  <!-- 01 Cover -->
+  [Cover] 1枚目必須
   <section class="slide cover active">
     <div class="cover-line"></div>
     <div class="cover-subject">DISCUSSION PAPER</div>
-    <h1 class="cover-title">新規事業参入戦略の検討</h1>
-    <p class="cover-subtitle">市場機会の評価と参入シナリオの提示</p>
-    <div class="cover-meta">株式会社XXX 御中 ｜ 2026.04.14</div>
+    <h1 class="cover-title">タイトル</h1>
+    <p class="cover-subtitle">サブタイトル</p>
+    <div class="cover-meta">宛先 ｜ YYYY.MM.DD</div>
   </section>
 
-  <!-- 02 Divider -->
+  [Divider] セクション扉
   <section class="slide divider">
     <div class="divider-number">01</div>
     <div class="divider-body">
       <div class="divider-label">SECTION 1</div>
-      <h2 class="divider-title">論点の構造と本日の焦点</h2>
-      <p class="divider-sub">本日議論すべきポイントを整理し、意思決定の前提となる論点構造を合意する</p>
+      <h2 class="divider-title">セクションタイトル</h2>
+      <p class="divider-sub">予告文</p>
     </div>
   </section>
 
-  <!-- 03 Content: bullets -->
+  [Content] 本文（4層ヘッダー + body layout 1種）
   <section class="slide">
-    <div class="section-label">1. 論点の構造</div>
-    <h2 class="slide-title">本件は「入るか入らないか」ではなく「どのモデルで入るか」が論点である</h2>
-    <p class="slide-subtitle">参入自体の意思決定は既に完了。議論の焦点は参入モデルの選択にある</p>
-    <div class="message-line">3つの参入モデル（自社単独・JV・買収）のトレードオフを構造化し、本日意思決定の判断軸を合意したい</div>
-    <ul class="body-bullets">
-      <li>前回MTGで<strong>「参入自体は既定路線」</strong>と合意済み（2026-03-20 キックオフ議事録参照）</li>
-      <li>残された論点は「どの入り方を選ぶか」と「そのために誰と組むか」の2点</li>
-      <li>本日は参入モデル3案のトレードオフを整理し、来週の経営会議に向けた判断軸を合意する</li>
-      <li>各モデルの深掘りは Section 2 以降で実施</li>
-    </ul>
-    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.3</span></div>
+    <div class="section-label">N. セクション名</div>
+    <h2 class="slide-title">タイトル（アサーション型「〜する」）</h2>
+    <p class="slide-subtitle">サブタイトル</p>
+    <div class="message-line">So What メッセージライン</div>
+    <!-- Body: 以下7種から1つ選択 -->
+    <!-- .body-bullets / .body-2col / .body-table / .body-matrix / .body-flow / .body-key / .body-timeline -->
+    <div class="footer"><span>Confidential</span><span>P.N</span></div>
   </section>
 
-  <!-- 04 Content: 2col -->
-  <section class="slide">
-    <div class="section-label">2. 現状と目標</div>
-    <h2 class="slide-title">現状は「販売力に依存」、目標は「商品力で選ばれる」状態</h2>
-    <p class="slide-subtitle">3年スパンでのポジション転換を志向する</p>
-    <div class="message-line">現状と目標の差分が、今回の戦略的アジェンダ全体を規定する</div>
-    <div class="body-2col">
-      <div>
-        <div class="col-title">AS-IS</div>
-        <h3 class="col-heading">現状: 販売力依存</h3>
-        <ul class="body-bullets">
-          <li>売上の70%が既存クライアント依存</li>
-          <li>新規リードは紹介経由が中心</li>
-          <li>価格競争に巻き込まれやすい</li>
-          <li>商品軸でのブランド認知が限定的</li>
-        </ul>
-      </div>
-      <div>
-        <div class="col-title">TO-BE</div>
-        <h3 class="col-heading">目標: 商品力で選ばれる</h3>
-        <ul class="body-bullets">
-          <li>新規案件の50%を自社ブランド経由で獲得</li>
-          <li>業界内で「第一想起」ポジション</li>
-          <li>プレミアム価格帯の売上構成比 40%</li>
-          <li>自社メディアからのリード獲得機能</li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.4</span></div>
-  </section>
-
-  <!-- 05 Content: table -->
-  <section class="slide">
-    <div class="section-label">3. 選択肢の評価</div>
-    <h2 class="slide-title">3案の比較: 自社単独 / JV / 買収</h2>
-    <p class="slide-subtitle">5つの判断軸で横比較</p>
-    <div class="message-line">スピード最優先なら買収、リスク最小なら自社単独、バランスならJV</div>
-    <table class="body-table">
-      <thead>
-        <tr><th>判断軸</th><th>自社単独</th><th>JV</th><th>買収</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>立ち上げスピード</td><td>△ 24ヶ月</td><td>○ 12ヶ月</td><td><strong>◎ 6ヶ月</strong></td></tr>
-        <tr><td>初期投資</td><td><strong>◎ 1億円</strong></td><td>○ 3億円</td><td>△ 15億円</td></tr>
-        <tr><td>技術・ノウハウ獲得</td><td>△ ゼロから</td><td>○ パートナー経由</td><td><strong>◎ 即時獲得</strong></td></tr>
-        <tr><td>ブランド独立性</td><td><strong>◎ 完全独立</strong></td><td>△ 共同ブランド</td><td>○ 統合設計余地</td></tr>
-        <tr><td>失敗時リスク</td><td><strong>◎ 小</strong></td><td>○ 中</td><td>△ 大</td></tr>
-      </tbody>
-    </table>
-    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.5</span></div>
-  </section>
-
-  <!-- 06 Content: matrix -->
-  <section class="slide">
-    <div class="section-label">3. 選択肢の評価</div>
-    <h2 class="slide-title">2軸マッピングで「買収」が最適象限に位置する</h2>
-    <p class="slide-subtitle">スピード × シナジー期待値のマトリクス</p>
-    <div class="message-line">スピード要求が高く、シナジー期待値も中〜高水準という今回の条件下では、買収が最適解</div>
-    <div class="body-matrix">
-      <div></div>
-      <div class="matrix-header">シナジー期待値: 低</div>
-      <div class="matrix-header">シナジー期待値: 高</div>
-      <div class="matrix-axis">速い</div>
-      <div class="matrix-cell"><strong>即席JV</strong>浅い提携。本丸シナジーに届きづらい</div>
-      <div class="matrix-cell highlight"><strong>買収 ★</strong>スピード × シナジー両立。本命シナリオ</div>
-      <div class="matrix-axis">遅い</div>
-      <div class="matrix-cell"><strong>撤退候補</strong>時間もシナジーもない象限</div>
-      <div class="matrix-cell"><strong>自社単独開発</strong>シナジーは高いが、立ち上げが遅い</div>
-    </div>
-    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.6</span></div>
-  </section>
-
-  <!-- 07 Content: flow -->
-  <section class="slide">
-    <div class="section-label">4. 実行プラン</div>
-    <h2 class="slide-title">買収実行は4段階で12ヶ月を目処とする</h2>
-    <p class="slide-subtitle">ターゲット選定からPMI完了まで</p>
-    <div class="message-line">各段階にステージゲートを設け、意思決定のフェーズを明確化する</div>
-    <div class="body-flow">
-      <div class="flow-step"><div class="flow-phase">PHASE 1</div><div class="flow-title">ロングリスト化</div><div class="flow-desc">業界内候補30社をスクリーニング。戦略適合性と入手可能性で初期評価（1-2ヶ月）</div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step"><div class="flow-phase">PHASE 2</div><div class="flow-title">ショートリスト化</div><div class="flow-desc">3-5社に絞り込み、初期接触（NDA締結・IM受領）を実施（2-3ヶ月）</div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step"><div class="flow-phase">PHASE 3</div><div class="flow-title">DD・交渉</div><div class="flow-desc">本命1社に対してDD実施、SPA交渉、クロージング（4-5ヶ月）</div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step"><div class="flow-phase">PHASE 4</div><div class="flow-title">PMI実行</div><div class="flow-desc">100日計画の策定・実行、シナジー実現（12ヶ月〜）</div></div>
-    </div>
-    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.7</span></div>
-  </section>
-
-  <!-- 08 Content: key number -->
-  <section class="slide">
-    <div class="section-label">5. インパクト試算</div>
-    <h2 class="slide-title">3年後売上インパクトは約48億円</h2>
-    <p class="slide-subtitle">買収先既存売上 + クロスセル効果</p>
-    <div class="message-line">対象会社単独の売上25億円に、シナジー23億円を積み上げた総合効果として試算</div>
-    <div class="body-key">
-      <div class="key-number">48<span class="key-unit">億円</span></div>
-      <div class="key-caption">3年後連結売上インパクト（想定シナリオ・中位ケース）<br>内訳: 対象会社既存売上 25億円 + クロスセルシナジー 23億円</div>
-    </div>
-    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.8</span></div>
-  </section>
-
-  <!-- 09 Content: timeline -->
-  <section class="slide">
-    <div class="section-label">6. スケジュール</div>
-    <h2 class="slide-title">今期Q3に最終意思決定、来期上期クロージングを想定</h2>
-    <p class="slide-subtitle">マイルストーンと必要な社内プロセスを明示</p>
-    <div class="message-line">本日のディスカッションを踏まえ、5月の経営会議での最終判断を目指す</div>
-    <div class="body-timeline">
-      <div class="tl-point current"><div class="tl-date">2026-04</div><div class="tl-label">本DP討議</div><div class="tl-note">論点構造の合意</div></div>
-      <div class="tl-point"><div class="tl-date">2026-05</div><div class="tl-label">経営会議</div><div class="tl-note">参入モデル最終決定</div></div>
-      <div class="tl-point"><div class="tl-date">2026-07</div><div class="tl-label">ターゲット選定</div><div class="tl-note">ショートリスト確定</div></div>
-      <div class="tl-point"><div class="tl-date">2026-10</div><div class="tl-label">DD開始</div><div class="tl-note">本命1社に対して実施</div></div>
-      <div class="tl-point"><div class="tl-date">2027-04</div><div class="tl-label">クロージング</div><div class="tl-note">PMI開始</div></div>
-    </div>
-    <div class="footer"><span>BCG Discussion Paper ｜ Confidential</span><span>P.9</span></div>
-  </section>
-
-  <!-- 10 Closing -->
+  [Closing] 締め
   <section class="slide closing">
     <div>
-      <div class="closing-message">本日の焦点は「買収を推進するか」の経営判断。<br>事務局としては買収モデルでの推進を推奨する。</div>
-      <div class="closing-sub">判断を保留する場合、次回経営会議（5月）までに代替案の論点深掘りが必要</div>
+      <div class="closing-message">締めメッセージ</div>
+      <div class="closing-sub">補足</div>
     </div>
+  </section>
+  -->
+
+  <!-- デフォルト Cover（差し替えて使う） -->
+  <section class="slide cover active">
+    <div class="cover-line"></div>
+    <div class="cover-subject">DISCUSSION PAPER</div>
+    <h1 class="cover-title">タイトルを入力</h1>
+    <p class="cover-subtitle">サブタイトルを入力</p>
+    <div class="cover-meta">宛先 ｜ YYYY.MM.DD</div>
   </section>
 
 </div>
