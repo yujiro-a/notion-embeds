@@ -376,5 +376,31 @@
   </div>
 </div>
 
+<script>
+(function(){
+  const BASE_W = 1440, BASE_H = 810;
+  let target = document.querySelector('.slide') || document.querySelector('.presentation');
+  if (!target) return;
+  let hasTranslate = target.classList.contains('slide');
+  if (target.classList.contains('presentation')) {
+    target.style.width = BASE_W + 'px';
+    target.style.height = BASE_H + 'px';
+    target.style.position = 'absolute';
+    target.style.top = '50%';
+    target.style.left = '50%';
+    hasTranslate = true;
+  }
+  const fit = () => {
+    const s = Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H);
+    target.style.transform = hasTranslate
+      ? `translate(-50%, -50%) scale(${s})`
+      : `scale(${s})`;
+    if (!hasTranslate) target.style.transformOrigin = 'top left';
+  };
+  addEventListener('load', fit);
+  addEventListener('resize', fit);
+  fit();
+})();
+</script>
 </body>
 </html>
