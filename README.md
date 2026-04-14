@@ -12,3 +12,5 @@ Static HTML files published via GitHub Pages for Notion embed use.
 ## Files
 
 - `profile_VicePresident.html` — Yujiro Arakawa self-introduction (Vice President profile).
+- `20260406_craco_service.html` — craco service introduction.
+- `20260409_arakawa_profile.html` — Yujiro Arakawa self-introduction (1-slide v2).

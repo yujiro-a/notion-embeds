@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>craco サービスのご紹介</title>
+<style>
+  :root {
+    --dark-navy: #1D3867;
+    --blue-dark: #353990;
+    --blue-std: #004AAD;
+    --blue-light: #4081D7;
+    --teal: #158792;
+    --teal-light: #1CA3B0;
+    --gold: #F6CA1A;
+    --bg-light: #F5F6F8;
+    --bg-card: #FFFFFF;
+    --text-dark: #151515;
+    --text-body: #454545;
+    --text-sub: #797979;
+    --text-caption: #A6A6A6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Meiryo UI', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+  }
+
+  .presentation { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+  .slide {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none; flex-direction: column;
+    background: var(--bg-light);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.38s ease, transform 0.38s ease;
+  }
+  .slide.active { display: flex; opacity: 1; transform: translateX(0); }
+  .slide.exit { display: flex; opacity: 0; transform: translateX(-50px); }
+
+  /* ===== COMMON HEADER ===== */
+  .slide-header {
+    background: var(--dark-navy);
+    padding: 1.4vh 4vw;
+    flex-shrink: 0;
+  }
+  .slide-title {
+    font-size: clamp(20px, 2.2vw, 40px);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+  .slide-message {
+    background: #EEF1F5;
+    border-left: 5px solid var(--teal);
+    padding: 1.0vh 2.5vw;
+    font-size: clamp(13px, 1.15vw, 22px);
+    color: var(--dark-navy);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ===== FOOTER ===== */
+  .slide-footer {
+    background: var(--dark-navy);
+    padding: 0.5vh 3vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .footer-text {
+    font-size: clamp(9px, 0.65vw, 12px);
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.06em;
+  }
+  .footer-page { font-size: clamp(9px, 0.65vw, 12px); color: rgba(255,255,255,0.55); }
+
+  /* ===== SLIDE BODY ===== */
+  .slide-body {
+    flex: 1;
+    padding: 2.5vh 4vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+  }
+
+  /* ===== INDICATORS ===== */
+  #indicators {
+    position: fixed;
+    bottom: 3.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 1000;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transition: background 0.25s, transform 0.25s;
+    cursor: pointer;
+  }
+  .dot.active { background: var(--gold); transform: scale(1.4); }
+
+  /* ===== NAV BUTTONS ===== */
+  .nav-btn {
+    position: fixed;
+    top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: clamp(16px, 1.4vw, 26px);
+    width: clamp(36px, 3vw, 52px);
+    height: clamp(52px, 5vh, 80px);
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 900;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.25); }
+  #prev { left: 1vw; }
+  #next { right: 1vw; }
+
+  /* ==================================================
+     P.1 COVER
+  ================================================== */
+  .slide-cover {
+    background: var(--dark-navy);
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .cover-gold-line {
+    position: absolute; left: 0; top: 0;
+    width: 7px; height: 100%;
+    background: var(--gold);
+  }
+  .cover-content {
+    padding-left: 12vw;
+    padding-right: 8vw;
+    display: flex;
+    flex-direction: column;
+    gap: 2.4vh;
+  }
+  .cover-tag {
+    display: inline-block;
+    background: var(--teal);
+    color: #fff;
+    font-size: clamp(10px, 0.85vw, 15px);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    padding: 0.5vh 1.4vw;
+    border-radius: 3px;
+    width: fit-content;
+  }
+  .cover-main-title {
+    font-size: clamp(52px, 7.5vw, 140px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+  .cover-sub-title {
+    font-size: clamp(20px, 2.2vw, 42px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+    opacity: 0.9;
+  }
+  .cover-service-label {
+    font-size: clamp(14px, 1.35vw, 26px);
+    font-weight: 600;
+    color: var(--blue-light);
+    letter-spacing: 0.04em;
+  }
+  .cover-divider {
+    width: 90px; height: 4px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+  .cover-meta {
+    font-size: clamp(11px, 1.0vw, 18px);
+    color: rgba(255,255,255,0.5);
+    line-height: 2.0;
+  }
+
+  /* ==================================================
+     P.2 三つの壁
+  ================================================== */
+  .cards-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5vw;
+    flex: 1;
+  }
+  .problem-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 28px rgba(29,56,103,0.12);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .problem-card-header {
+    background: var(--teal);
+    padding: 2.2vh 2.2vw;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .problem-card-num {
+    font-size: clamp(36px, 4.5vw, 82px);
+    font-weight: 900;
+    color: rgba(255,255,255,0.18);
+    position: absolute;
+    right: 1.2vw;
+    bottom: -0.8vh;
+    line-height: 1;
+  }
+  .problem-card-title {
+    font-size: clamp(15px, 1.4vw, 26px);
+    font-weight: 800;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+    line-height: 1.3;
+  }
+  .problem-card-body {
+    padding: 2.4vh 2.2vw;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .problem-card-text {
+    font-size: clamp(13px, 1.05vw, 20px);
+    color: var(--text-body);
+    line-height: 1.85;
+  }
+
+  /* ==================================================
+     P.3 なぜ自力では
+  ================================================== */
+  .split-2col {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    gap: 3vw;
+    flex: 1;
+  }
+  .flow-box-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8vw;
+    margin-bottom: 2.5vh;
+  }
+  .flow-box {
+    background: var(--dark-navy);
+    color: #fff;
+    font-size: clamp(12px, 1.1vw, 20px);
+    font-weight: 700;
+    padding: 1.4vh 1.6vw;
+    border-radius: 6px;
+    text-align: center;
+    flex: 1;
+    line-height: 1.3;
+  }
+  .flow-arrow {
+    color: var(--teal);
+    font-size: clamp(16px, 1.6vw, 28px);
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .feedback-bar {
+    background: #FFF0F0;
+    border: 2px dashed #E05050;
+    color: #C03030;
+    font-size: clamp(11px, 0.95vw, 17px);
+    font-weight: 700;
+    padding: 0.8vh 1.5vw;
+    border-radius: 5px;
+    text-align: center;
+  }
+  .point-list { display: flex; flex-direction: column; gap: 2.2vh; flex: 1; justify-content: center; }
+  .point-item { display: flex; gap: 1.2vw; align-items: flex-start; }
+  .point-bullet {
+    width: clamp(28px, 2.6vw, 46px);
+    height: clamp(28px, 2.6vw, 46px);
+    background: var(--teal);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: clamp(13px, 1.15vw, 21px);
+    font-weight: 900;
+    margin-top: 0.2vh;
+  }
+  .point-content {}
+  .point-title {
+    font-size: clamp(14px, 1.25vw, 23px);
+    font-weight: 800;
+    color: var(--dark-navy);
+    margin-bottom: 0.5vh;
+  }
+  .point-desc {
+    font-size: clamp(12px, 1.0vw, 18px);
+    color: var(--text-body);
+    line-height: 1.75;
+  }
+
+  /* ==================================================
+     P.4 DARK — 転換点
+  ================================================== */
+  .slide-dark {
+    background: var(--dark-navy);
+  }
+  .slide-dark .slide-header {
+    background: rgba(0,0,0,0.3);
+  }
+  .slide-dark .slide-message {
+    background: rgba(255,255,255,0.07);
+    border-left-color: var(--gold);
+    color: rgba(255,255,255,0.9);
+  }
+  .slide-dark .slide-footer {
+    background: rgba(0,0,0,0.3);
+  }
+  .cards-3col-dark {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5vw;
+    flex: 1;
+    padding: 1vh 0;
+  }
+  .dark-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 3vh 2.2vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8vh;
+    box-shadow: 0 8px 36px rgba(0,0,0,0.35);
+  }
+  .dark-card-num {
+    width: clamp(44px, 4.2vw, 76px);
+    height: clamp(44px, 4.2vw, 76px);
+    background: var(--teal);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: clamp(20px, 2.0vw, 38px);
+    font-weight: 900;
+  }
+  .dark-card-name {
+    font-size: clamp(16px, 1.5vw, 28px);
+    font-weight: 800;
+    color: var(--dark-navy);
+    line-height: 1.25;
+  }
+  .dark-card-desc {
+    font-size: clamp(12px, 1.02vw, 19px);
+    color: var(--text-body);
+    line-height: 1.8;
+    flex: 1;
+  }
+  .dark-card-tag {
+    display: inline-block;
+    background: var(--blue-dark);
+    color: #fff;
+    font-size: clamp(10px, 0.85vw, 15px);
+    font-weight: 700;
+    padding: 0.5vh 1.0vw;
+    border-radius: 4px;
+    width: fit-content;
+  }
+
+  /* ==================================================
+     P.5 サービス全体像
+  ================================================== */
+  .phase-flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2vh;
+  }
+  .phase-box {
+    background: var(--dark-navy);
+    color: #fff;
+    border-radius: 8px;
+    padding: 2.2vh 1.8vw;
+    text-align: center;
+  }
+  .phase-box-label {
+    font-size: clamp(10px, 0.82vw, 15px);
+    font-weight: 700;
+    color: var(--teal-light);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5vh;
+  }
+  .phase-box-title {
+    font-size: clamp(16px, 1.5vw, 28px);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .phase-arrow-big {
+    font-size: clamp(24px, 2.4vw, 44px);
+    color: var(--teal);
+    font-weight: 900;
+    padding: 0 1.0vw;
+  }
+  .phase-services-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2vw;
+    flex: 1;
+  }
+  .phase-service-col {
+    background: #fff;
+    border-radius: 8px;
+    padding: 2vh 2vw;
+    box-shadow: 0 3px 16px rgba(29,56,103,0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2vh;
+  }
+  .phase-service-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8vw;
+  }
+  .phase-bullet {
+    width: 8px; height: 8px;
+    background: var(--teal);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.6vh;
+  }
+  .phase-service-text {
+    font-size: clamp(13px, 1.1vw, 20px);
+    color: var(--text-body);
+    line-height: 1.65;
+    font-weight: 600;
+  }
+
+  /* ==================================================
+     P.6 CF支援 左右非対称
+  ================================================== */
+  .split-6040 {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 3vw;
+    flex: 1;
+    align-items: stretch;
+  }
+  .service-list { display: flex; flex-direction: column; gap: 2.0vh; justify-content: center; }
+  .service-item { display: flex; align-items: flex-start; gap: 1.2vw; }
+  .service-item-num {
+    font-size: clamp(22px, 2.2vw, 40px);
+    font-weight: 900;
+    color: var(--teal);
+    flex-shrink: 0;
+    line-height: 1;
+    min-width: 2.5vw;
+  }
+  .service-item-content {}
+  .service-item-title {
+    font-size: clamp(14px, 1.25vw, 23px);
+    font-weight: 800;
+    color: var(--dark-navy);
+    margin-bottom: 0.4vh;
+  }
+  .service-item-desc {
+    font-size: clamp(12px, 1.0vw, 18px);
+    color: var(--text-body);
+    line-height: 1.7;
+  }
+  .kpi-col { display: flex; flex-direction: column; gap: 1.8vh; justify-content: center; }
+  .kpi-card {
+    background: #fff;
+    border-left: 5px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    padding: 2.2vh 2vw;
+    box-shadow: 0 3px 16px rgba(29,56,103,0.10);
+  }
+  .kpi-number {
+    font-size: clamp(32px, 3.8vw, 72px);
+    font-weight: 900;
+    color: var(--teal);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+  }
+  .kpi-unit {
+    font-size: clamp(14px, 1.2vw, 22px);
+    font-weight: 700;
+    color: var(--teal);
+  }
+  .kpi-label {
+    font-size: clamp(11px, 0.9vw, 17px);
+    color: var(--text-sub);
+    margin-top: 0.4vh;
+    font-weight: 600;
+  }
+
+  /* ==================================================
+     P.7 ステップフロー
+  ================================================== */
+  .step-flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    gap: 0;
+    align-items: stretch;
+    flex: 1;
+  }
+  .step-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 3vh 2vw;
+    box-shadow: 0 4px 22px rgba(29,56,103,0.11);
+    display: flex;
+    flex-direction: column;
+    gap: 1.6vh;
+  }
+  .step-num-circle {
+    width: clamp(44px, 4.0vw, 72px);
+    height: clamp(44px, 4.0vw, 72px);
+    background: var(--teal);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: clamp(20px, 1.9vw, 34px);
+    font-weight: 900;
+  }
+  .step-title {
+    font-size: clamp(15px, 1.35vw, 25px);
+    font-weight: 800;
+    color: var(--dark-navy);
+    line-height: 1.25;
+  }
+  .step-desc {
+    font-size: clamp(12px, 1.0vw, 18px);
+    color: var(--text-body);
+    line-height: 1.75;
+    flex: 1;
+  }
+  .step-period-tag {
+    display: inline-block;
+    background: #EEF1F5;
+    color: var(--dark-navy);
+    font-size: clamp(10px, 0.85vw, 15px);
+    font-weight: 700;
+    padding: 0.4vh 0.9vw;
+    border-radius: 4px;
+    width: fit-content;
+  }
+  .step-arrow {
+    font-size: clamp(22px, 2.2vw, 40px);
+    color: var(--teal);
+    font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 0.8vw;
+  }
+
+  /* ==================================================
+     P.8 実績 — データビジュアライゼーション
+  ================================================== */
+  .kpi-4up {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2vw;
+    margin-bottom: 2.5vh;
+    flex-shrink: 0;
+  }
+  .kpi-big-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 2.5vh 2vw;
+    box-shadow: 0 4px 20px rgba(29,56,103,0.10);
+    text-align: center;
+    border-top: 5px solid var(--teal);
+  }
+  .kpi-big-num {
+    font-size: clamp(32px, 4.2vw, 80px);
+    font-weight: 900;
+    color: var(--teal);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+  }
+  .kpi-big-unit {
+    font-size: clamp(16px, 1.4vw, 26px);
+    font-weight: 700;
+    color: var(--teal);
+  }
+  .kpi-big-label {
+    font-size: clamp(11px, 0.9vw, 16px);
+    color: var(--text-sub);
+    font-weight: 600;
+    margin-top: 0.6vh;
+  }
+  .chart-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.8vh;
+  }
+  .chart-row { display: flex; align-items: center; gap: 1.5vw; }
+  .chart-year {
+    font-size: clamp(12px, 1.05vw, 19px);
+    font-weight: 700;
+    color: var(--dark-navy);
+    width: 6vw;
+    flex-shrink: 0;
+  }
+  .chart-bar-wrap {
+    flex: 1;
+    height: clamp(30px, 4.5vh, 58px);
+    background: #EEF1F5;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+  }
+  .chart-bar {
+    height: 100%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding-left: 1.2vw;
+    font-size: clamp(12px, 1.05vw, 18px);
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(90deg, var(--teal) 0%, var(--teal-light) 100%);
+    transition: width 0.8s ease;
+  }
+  .chart-amount {
+    font-size: clamp(12px, 1.05vw, 19px);
+    font-weight: 700;
+    color: var(--dark-navy);
+    width: 8vw;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  /* ==================================================
+     P.9 カテゴリ別実績
+  ================================================== */
+  .dual-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3vw;
+    flex: 1;
+    align-items: start;
+  }
+  .result-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: clamp(12px, 1.05vw, 19px);
+  }
+  .result-table thead tr th {
+    padding: 1.2vh 1.4vw;
+    text-align: left;
+    font-weight: 800;
+    font-size: clamp(12px, 1.0vw, 18px);
+    color: #fff;
+    letter-spacing: 0.04em;
+  }
+  .result-table tbody tr td {
+    padding: 1.1vh 1.4vw;
+    color: var(--text-body);
+    font-weight: 600;
+    border-bottom: 1px solid #EEF1F5;
+  }
+  .result-table tbody tr:last-child td { border-bottom: none; }
+  .result-table tbody tr:hover td { background: #F8FAFB; }
+  .teal-header { background: var(--teal); }
+  .dark-header { background: var(--blue-dark); }
+  .teal-text { color: var(--teal); font-weight: 800; }
+  .table-wrap {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(29,56,103,0.10);
+  }
+  .table-caption {
+    font-size: clamp(10px, 0.82vw, 14px);
+    color: var(--text-caption);
+    margin-top: 1.5vh;
+    padding: 0 0.5vw;
+  }
+
+  /* ==================================================
+     P.10 会社概要
+  ================================================== */
+  .company-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5vh;
+    flex: 1;
+  }
+  .info-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: clamp(13px, 1.1vw, 20px);
+  }
+  .info-table tr td {
+    padding: 1.2vh 1.8vw;
+    border-bottom: 1px solid #EEF1F5;
+    vertical-align: top;
+  }
+  .info-table tr:last-child td { border-bottom: none; }
+  .info-key {
+    width: 22%;
+    font-weight: 800;
+    color: var(--dark-navy);
+    background: #F0F4FA;
+    border-radius: 4px 0 0 4px;
+    white-space: nowrap;
+  }
+  .info-val {
+    color: var(--text-body);
+    font-weight: 600;
+  }
+  .info-table-wrap {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 16px rgba(29,56,103,0.10);
+  }
+  .group-title {
+    font-size: clamp(13px, 1.1vw, 20px);
+    font-weight: 800;
+    color: var(--dark-navy);
+    margin-bottom: 1.2vh;
+  }
+  .group-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.8vw;
+  }
+  .group-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 2vh 1.8vw;
+    box-shadow: 0 3px 14px rgba(29,56,103,0.09);
+    border-top: 4px solid var(--blue-dark);
+  }
+  .group-card.highlight { border-top-color: var(--teal); background: #F0FAFA; }
+  .group-card-name {
+    font-size: clamp(14px, 1.25vw, 23px);
+    font-weight: 800;
+    color: var(--dark-navy);
+    margin-bottom: 0.6vh;
+  }
+  .group-card.highlight .group-card-name { color: var(--teal); }
+  .group-card-desc {
+    font-size: clamp(11px, 0.9vw, 16px);
+    color: var(--text-sub);
+    line-height: 1.6;
+    font-weight: 600;
+  }
+
+  /* ==================================================
+     P.11 END CARD
+  ================================================== */
+  .slide-end {
+    background: var(--dark-navy);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .end-gold-line {
+    position: absolute; right: 0; top: 0;
+    width: 7px; height: 100%;
+    background: var(--gold);
+  }
+  .end-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5vh;
+  }
+  .end-label {
+    font-size: clamp(11px, 0.9vw, 16px);
+    font-weight: 700;
+    color: var(--teal-light);
+    letter-spacing: 0.2em;
+  }
+  .end-main {
+    font-size: clamp(28px, 3.5vw, 66px);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .end-divider {
+    width: 80px; height: 4px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+  .end-company {
+    font-size: clamp(16px, 1.5vw, 28px);
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+  }
+  .end-contact {
+    font-size: clamp(13px, 1.15vw, 21px);
+    color: var(--blue-light);
+    font-weight: 600;
+    line-height: 2.0;
+  }
+
+  /* ==================================================
+     UTIL
+  ================================================== */
+  .left-col { display: flex; flex-direction: column; justify-content: center; }
+  .right-col { display: flex; flex-direction: column; justify-content: center; }
+
+</style>
+</head>
+<body>
+
+<div class="presentation" id="pres">
+
+  <!-- P.1 表紙 -->
+  <section class="slide slide-cover active" id="s1">
+    <div class="cover-gold-line"></div>
+    <div class="cover-content">
+      <span class="cover-tag">SERVICE INTRODUCTION</span>
+      <div>
+        <div class="cover-main-title">craco</div>
+        <div class="cover-sub-title">サービスのご紹介</div>
+      </div>
+      <div class="cover-service-label">商品ローンチ × D2Cマーケティング支援</div>
+      <div class="cover-divider"></div>
+      <div class="cover-meta">
+        株式会社craco<br>
+        2026年4月
+      </div>
+    </div>
+  </section>
+
+  <!-- P.2 三つの壁 -->
+  <section class="slide" id="s2">
+    <div class="slide-header"><div class="slide-title">新商品ローンチに立ちはだかる「3つの壁」</div></div>
+    <div class="slide-message">良い商品があっても、それだけでは売れない時代。ローンチを成功させるには3つの課題を同時に解決しなければならない。</div>
+    <div class="slide-body">
+      <div class="cards-3col">
+        <div class="problem-card">
+          <div class="problem-card-header">
+            <div class="problem-card-num">01</div>
+            <div class="problem-card-title">認知の<br>ゼロスタート</div>
+          </div>
+          <div class="problem-card-body">
+            <p class="problem-card-text">良い商品を作っても、ターゲットに届かない。広告だけでは初速が作れず、発売直後の空白期間が致命傷になる。</p>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-card-header">
+            <div class="problem-card-num">02</div>
+            <div class="problem-card-title">市場フィード<br>バック不足</div>
+          </div>
+          <div class="problem-card-body">
+            <p class="problem-card-text">発売してから売れないと分かるのでは遅い。事前に市場ニーズを定量的に検証する仕組みが不在。</p>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-card-header">
+            <div class="problem-card-num">03</div>
+            <div class="problem-card-title">社内リソースの<br>分散</div>
+          </div>
+          <div class="problem-card-body">
+            <p class="problem-card-text">商品開発・広告運用・LP制作・PR — 必要なスキルが多すぎて少人数チームでは手が回らない。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">2 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.3 なぜ自力では -->
+  <section class="slide" id="s3">
+    <div class="slide-header"><div class="slide-title">なぜ自力でのローンチは難しいのか</div></div>
+    <div class="slide-message">成功するローンチには「検証→認知→継続」の一貫した設計が必要。しかし、自社だけで揃えるには限界がある。</div>
+    <div class="slide-body">
+      <div class="split-2col">
+        <div class="left-col">
+          <div class="flow-box-row">
+            <div class="flow-box">商品企画</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">開発・製造</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">販売</div>
+          </div>
+          <div class="feedback-bar">← フィードバック不在のまま販売 ←</div>
+          <div style="margin-top:2.5vh; background:#fff; border-radius:8px; padding:2.5vh 2vw; box-shadow:0 3px 14px rgba(29,56,103,0.09);">
+            <div style="font-size:clamp(13px,1.1vw,20px); color:var(--text-sub); font-weight:600; line-height:1.8;">
+              「ローンチ初速は一度きり。<br>やり直しが効かない」という<br>不可逆リスクを多くの企業が<br>見落としている。
+            </div>
+          </div>
+        </div>
+        <div class="right-col">
+          <div class="point-list">
+            <div class="point-item">
+              <div class="point-bullet">1</div>
+              <div class="point-content">
+                <div class="point-title">知見の属人化</div>
+                <div class="point-desc">CF・広告・LPの成功パターンは経験値に依存。社内に蓄積しにくい。</div>
+              </div>
+            </div>
+            <div class="point-item">
+              <div class="point-bullet">2</div>
+              <div class="point-content">
+                <div class="point-title">PDCAの速度不足</div>
+                <div class="point-desc">自社だけだと施策の打ち手が限られ、改善サイクルが遅くなる。</div>
+              </div>
+            </div>
+            <div class="point-item">
+              <div class="point-bullet">3</div>
+              <div class="point-content">
+                <div class="point-title">機会損失の不可逆性</div>
+                <div class="point-desc">ローンチ初速は一度きり。やり直しが効かない。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">3 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.4 転換点（DARK） -->
+  <section class="slide slide-dark" id="s4">
+    <div class="slide-header"><div class="slide-title" style="color:#fff;">ローンチを成功させる「3つの条件」</div></div>
+    <div class="slide-message">売れるローンチには共通の設計がある。cracoはその3条件をすべて一気通貫で提供する。</div>
+    <div class="slide-body">
+      <div class="cards-3col-dark">
+        <div class="dark-card">
+          <div class="dark-card-num">1</div>
+          <div class="dark-card-name">事前検証</div>
+          <div class="dark-card-desc">発売前に市場の反応を定量的に測る。「作ってから売る」ではなく「売れると分かってから作る」設計。</div>
+          <span class="dark-card-tag">→ CF支援で実現</span>
+        </div>
+        <div class="dark-card">
+          <div class="dark-card-num">2</div>
+          <div class="dark-card-name">初速設計</div>
+          <div class="dark-card-desc">ローンチ初日〜1週間の認知・販売を最大化する導線設計。一度きりの機会を取りこぼさない。</div>
+          <span class="dark-card-tag">→ 広告運用+LP最適化</span>
+        </div>
+        <div class="dark-card">
+          <div class="dark-card-num">3</div>
+          <div class="dark-card-name">継続販売</div>
+          <div class="dark-card-desc">CF終了後の一般販売への橋渡し。単発の成功で終わらせず、事業の柱として育てる。</div>
+          <span class="dark-card-tag">→ EC/D2C支援</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">4 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.5 サービス全体像 -->
+  <section class="slide" id="s5">
+    <div class="slide-header"><div class="slide-title">cracoのサービス全体像</div></div>
+    <div class="slide-message">企画・検証からEC本稼働まで、ローンチの全フェーズを一貫して支援する。</div>
+    <div class="slide-body">
+      <div class="phase-flow">
+        <div class="phase-box">
+          <div class="phase-box-label">PHASE 1</div>
+          <div class="phase-box-title">企画・検証</div>
+        </div>
+        <div class="phase-arrow-big">→</div>
+        <div class="phase-box">
+          <div class="phase-box-label">PHASE 2</div>
+          <div class="phase-box-title">ローンチ</div>
+        </div>
+        <div class="phase-arrow-big">→</div>
+        <div class="phase-box">
+          <div class="phase-box-label">PHASE 3</div>
+          <div class="phase-box-title">EC本稼働</div>
+        </div>
+      </div>
+      <div class="phase-services-row" style="flex:1;">
+        <div class="phase-service-col">
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">市場調査・ターゲット設計</div></div>
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">CFページ企画・制作</div></div>
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">リターン設計・価格戦略</div></div>
+        </div>
+        <div class="phase-service-col">
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">CF出稿・プラットフォーム運用</div></div>
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">デジタル広告（Meta/Google）</div></div>
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">PR連携・メディア露出</div></div>
+        </div>
+        <div class="phase-service-col">
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">EC移行設計</div></div>
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">CRM構築（メール/LINE）</div></div>
+          <div class="phase-service-item"><div class="phase-bullet"></div><div class="phase-service-text">LTV最大化施策</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">5 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.6 CF支援（左右非対称） -->
+  <section class="slide" id="s6">
+    <div class="slide-header"><div class="slide-title">クラウドファンディング支援</div></div>
+    <div class="slide-message">73件・累計4.78億円の支援実績に基づくCFローンチの勝ちパターンを提供。</div>
+    <div class="slide-body">
+      <div class="split-6040">
+        <div class="left-col">
+          <div class="service-list">
+            <div class="service-item">
+              <div class="service-item-num">01</div>
+              <div class="service-item-content">
+                <div class="service-item-title">ページ企画・制作</div>
+                <div class="service-item-desc">CFページの設計・コピーライティング・ビジュアル制作。支援者の行動導線を設計する。</div>
+              </div>
+            </div>
+            <div class="service-item">
+              <div class="service-item-num">02</div>
+              <div class="service-item-content">
+                <div class="service-item-title">広告運用</div>
+                <div class="service-item-desc">Meta/Google等デジタル広告の集客設計。ROAS 17.9x の実績をベースに最適化。</div>
+              </div>
+            </div>
+            <div class="service-item">
+              <div class="service-item-num">03</div>
+              <div class="service-item-content">
+                <div class="service-item-title">出稿戦略</div>
+                <div class="service-item-desc">Makuake・CAMPFIRE等、プラットフォーム特性に応じた最適出稿設計。</div>
+              </div>
+            </div>
+            <div class="service-item">
+              <div class="service-item-num">04</div>
+              <div class="service-item-content">
+                <div class="service-item-title">データ分析</div>
+                <div class="service-item-desc">リアルタイムでの支援者動向分析・施策の継続的最適化。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="right-col">
+          <div class="kpi-col">
+            <div class="kpi-card">
+              <div><span class="kpi-number">73</span><span class="kpi-unit"> 件</span></div>
+              <div class="kpi-label">累計支援件数</div>
+            </div>
+            <div class="kpi-card">
+              <div><span class="kpi-number">4.78</span><span class="kpi-unit"> 億円</span></div>
+              <div class="kpi-label">累計調達額</div>
+            </div>
+            <div class="kpi-card">
+              <div><span class="kpi-number">17.9</span><span class="kpi-unit"> x</span></div>
+              <div class="kpi-label">広告 ROAS（最高実績）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">6 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.7 支援の流れ -->
+  <section class="slide" id="s7">
+    <div class="slide-header"><div class="slide-title">支援の流れ</div></div>
+    <div class="slide-message">ヒアリングから振り返りまで、4ステップで伴走型の支援を行う。</div>
+    <div class="slide-body">
+      <div class="step-flow">
+        <div class="step-card">
+          <div class="step-num-circle">1</div>
+          <div class="step-title">ヒアリング</div>
+          <div class="step-desc">商品特性・ターゲット・予算のすり合わせ。最適プラットフォームを選定する。</div>
+          <span class="step-period-tag">約1週間</span>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num-circle">2</div>
+          <div class="step-title">ページ企画・制作</div>
+          <div class="step-desc">CFページのコピーライティング・ビジュアル・リターン設計。</div>
+          <span class="step-period-tag">2〜4週間</span>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num-circle">3</div>
+          <div class="step-title">出稿・運用</div>
+          <div class="step-desc">広告配信開始。CF期間中のリアルタイム最適化で調達額を最大化する。</div>
+          <span class="step-period-tag">30〜60日</span>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num-circle">4</div>
+          <div class="step-title">振り返り・EC移行</div>
+          <div class="step-desc">実績レポート作成。一般販売への橋渡し設計で次のフェーズへ。</div>
+          <span class="step-period-tag">CF終了後1〜2週間</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">7 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.8 支援実績 -->
+  <section class="slide" id="s8">
+    <div class="slide-header"><div class="slide-title">支援実績</div></div>
+    <div class="slide-message">2023年〜2025年の3年間で着実に成長。2025年は過去最高の調達額を達成。</div>
+    <div class="slide-body">
+      <div class="kpi-4up">
+        <div class="kpi-big-card">
+          <div><span class="kpi-big-num">73</span><span class="kpi-big-unit">件</span></div>
+          <div class="kpi-big-label">累計支援件数</div>
+        </div>
+        <div class="kpi-big-card">
+          <div><span class="kpi-big-num">4.78</span><span class="kpi-big-unit">億円</span></div>
+          <div class="kpi-big-label">累計調達額</div>
+        </div>
+        <div class="kpi-big-card">
+          <div><span class="kpi-big-num">85</span><span class="kpi-big-unit">%</span></div>
+          <div class="kpi-big-label">目標達成率</div>
+        </div>
+        <div class="kpi-big-card">
+          <div><span class="kpi-big-num">17.9</span><span class="kpi-big-unit">x</span></div>
+          <div class="kpi-big-label">広告ROAS最高値</div>
+        </div>
+      </div>
+      <div class="chart-area">
+        <div class="chart-row">
+          <div class="chart-year">2023年</div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="width:38%;">22件</div>
+          </div>
+          <div class="chart-amount">¥7,721万</div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-year">2024年</div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="width:24%;">16件</div>
+          </div>
+          <div class="chart-amount">¥5,503万</div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-year">2025年</div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="width:92%;">34件</div>
+          </div>
+          <div class="chart-amount">¥3.40億</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">8 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.9 カテゴリ別実績 -->
+  <section class="slide" id="s9">
+    <div class="slide-header"><div class="slide-title">カテゴリ別・商品別実績</div></div>
+    <div class="slide-message">家電・ガジェット領域が最大。単品での億超えを複数達成している。</div>
+    <div class="slide-body">
+      <div class="dual-table">
+        <div>
+          <div class="table-wrap">
+            <table class="result-table">
+              <thead><tr class="teal-header"><th>カテゴリ</th><th>件数</th><th>調達額</th></tr></thead>
+              <tbody>
+                <tr><td>家電・ガジェット</td><td>13件</td><td>2.83億円</td></tr>
+                <tr><td>バッグ・旅行</td><td>15件</td><td>0.69億円</td></tr>
+                <tr><td>ファッション</td><td>17件</td><td>0.65億円</td></tr>
+                <tr><td>寝具</td><td>8件</td><td>0.24億円</td></tr>
+                <tr><td>美容・健康</td><td>5件</td><td>0.20億円</td></tr>
+                <tr><td>その他</td><td>15件</td><td>0.17億円</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div class="table-wrap">
+            <table class="result-table">
+              <thead><tr class="dark-header"><th>商品名</th><th>調達額</th><th>達成率</th></tr></thead>
+              <tbody>
+                <tr><td>土鍋炊飯器</td><td>1.67億円</td><td class="teal-text">55,796%</td></tr>
+                <tr><td>土鍋</td><td>5,495万円</td><td class="teal-text">54,950%</td></tr>
+                <tr><td>ショルダーバッグ</td><td>1,876万円</td><td class="teal-text">18,758%</td></tr>
+                <tr><td>ダウン半纏</td><td>1,752万円</td><td class="teal-text">5,839%</td></tr>
+                <tr><td>スマートリング</td><td>1,747万円</td><td class="teal-text">3,494%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-caption">※ 商品名は一部略称。掲載許諾確認中。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">9 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.10 会社概要 -->
+  <section class="slide" id="s10">
+    <div class="slide-header"><div class="slide-title">会社概要</div></div>
+    <div class="slide-message">CROSS TOKYO GROUPのマーケティング・D2C支援を担う専門組織。</div>
+    <div class="slide-body">
+      <div class="company-layout">
+        <div class="info-table-wrap">
+          <table class="info-table">
+            <tr><td class="info-key">会社名</td><td class="info-val">株式会社craco</td></tr>
+            <tr><td class="info-key">代表者</td><td class="info-val">※確認中</td></tr>
+            <tr><td class="info-key">設立</td><td class="info-val">※確認中</td></tr>
+            <tr><td class="info-key">所在地</td><td class="info-val">※確認中</td></tr>
+            <tr><td class="info-key">事業内容</td><td class="info-val">クラウドファンディング支援・D2Cマーケティング・新規事業開発</td></tr>
+            <tr><td class="info-key">グループ</td><td class="info-val">CROSS TOKYO GROUP</td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="group-title">CROSS TOKYO GROUP</div>
+          <div class="group-cards">
+            <div class="group-card highlight">
+              <div class="group-card-name">craco</div>
+              <div class="group-card-desc">CF × D2Cマーケティング支援</div>
+            </div>
+            <div class="group-card">
+              <div class="group-card-name">commissure</div>
+              <div class="group-card-desc">フィジカルAI</div>
+            </div>
+            <div class="group-card">
+              <div class="group-card-name">Parkour Japan</div>
+              <div class="group-card-desc">AIエージェント</div>
+            </div>
+            <div class="group-card">
+              <div class="group-card-name">Clafit Consulting</div>
+              <div class="group-card-desc">SF育成</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="footer-text">CROSS TOKYO GROUP | Confidential</span>
+      <span class="footer-page">10 / 11</span>
+    </div>
+  </section>
+
+  <!-- P.11 エンドカード -->
+  <section class="slide slide-end" id="s11">
+    <div class="end-gold-line"></div>
+    <div class="end-content">
+      <div class="end-label">CONTACT US</div>
+      <div class="end-main">お気軽にご相談ください</div>
+      <div class="end-divider"></div>
+      <div class="end-company">株式会社craco</div>
+      <div class="end-contact">
+        Email: ※確認中<br>
+        TEL: ※確認中
+      </div>
+    </div>
+  </section>
+
+</div><!-- /presentation -->
+
+<!-- NAV -->
+<button class="nav-btn" id="prev">&#8249;</button>
+<button class="nav-btn" id="next">&#8250;</button>
+
+<!-- INDICATORS -->
+<div id="indicators"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const indWrap = document.getElementById('indicators');
+  let current = 0;
+  let animating = false;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    indWrap.appendChild(d);
+  });
+
+  function getDots() { return document.querySelectorAll('.dot'); }
+
+  function goTo(idx) {
+    if (animating || idx === current || idx < 0 || idx >= slides.length) return;
+    animating = true;
+
+    const prev = slides[current];
+    const next = slides[idx];
+    const dots = getDots();
+
+    // exit old
+    prev.classList.add('exit');
+    prev.classList.remove('active');
+
+    // enter new
+    next.style.opacity = '0';
+    next.style.transform = idx > current ? 'translateX(50px)' : 'translateX(-50px)';
+    next.style.display = 'flex';
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        next.style.transition = 'opacity 0.38s ease, transform 0.38s ease';
+        next.style.opacity = '1';
+        next.style.transform = 'translateX(0)';
+        next.classList.add('active');
+      });
+    });
+
+    setTimeout(() => {
+      prev.classList.remove('exit');
+      prev.style.display = '';
+      animating = false;
+    }, 400);
+
+    dots.forEach(d => d.classList.remove('active'));
+    dots[idx].classList.add('active');
+    current = idx;
+  }
+
+  document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('next').addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+  });
+
+  // Touch support
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) goTo(dx < 0 ? current + 1 : current - 1);
+    touchX = null;
+  });
+</script>
+</body>
+</html>
